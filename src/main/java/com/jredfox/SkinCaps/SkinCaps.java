@@ -1,12 +1,12 @@
-package com.jredfox.SkinCaps;
+package com.jredfox.skincaps;
 
 import java.io.File;
 
 import com.evilnotch.lib.main.skin.SkinCache;
-import com.evilnotch.lib.main.skin.SkinEntry;
 import com.evilnotch.lib.main.skin.SkinEvent;
 import com.evilnotch.lib.minecraft.registry.GeneralRegistry;
 import com.evilnotch.lib.util.JavaUtil;
+import com.evilnotch.lib.util.simple.PairObj;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
@@ -25,9 +25,11 @@ public class SkinCaps
     
     public static String userSession;
     public static Configuration cfg;
+    public static Configuration capeCache;
     public static String skin = "";
     public static String model = "";
     public static String cape = "";
+    public static boolean cacheCapes;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -45,6 +47,11 @@ public class SkinCaps
         cape = cfg.get("caps", "cape", "").getString().trim();
         model = cfg.get("caps", "model", "").getString().trim().toLowerCase();
         cfg.save();
+        
+        capeCache = new Configuration(new File(dir, "capeCache.cfg"));
+        capeCache.load();
+        cacheCapes = capeCache.get("general", "cacheCapes", true).getBoolean();
+        capeCache.save();
         
         //register the command
         GeneralRegistry.registerClientCommand(new SkinCommand());
@@ -98,9 +105,24 @@ public class SkinCaps
     	if(dirty)
     	{
     		if(event.skin.isEmpty)
-    			event.skin.skin = "http://textures.minecraft.net/texture/$steve"; //will always return 400-404 but will allow for model and cape to still work
+    			event.skin.skin = "http://textures.minecraft.net/texture/$null"; //gets redirected to either http://textures.minecraft.net/texture/$steve or http://textures.minecraft.net/texture/$alex which gets patched on client side to be steve or alex
     		event.skin.isEmpty = false;
     	}
+    }
+   
+    /**
+     * TODO implments whenever a player has a cape and joined the world
+     */
+    public static void cacheCapes(String... capes)
+    {
+        if(!cacheCapes)
+        	return;
+        
+    	capeCache.load();
+    	for(String c : capes)
+    		if(!c.isEmpty() && JavaUtil.isURL(c))
+    			capeCache.get("capes", c, true);
+    	capeCache.save();
     }
 
 	public static void saveConfig()
@@ -108,6 +130,7 @@ public class SkinCaps
         cfg.get("caps", "skin", "").set(skin);
         cfg.get("caps", "cape", "").set(cape);
         cfg.get("caps", "model", "").set(model);
+        cfg.get("caps", "cached_capes", true);
         cfg.save();
 	}
 }

@@ -1,4 +1,4 @@
-package com.jredfox.SkinCaps;
+package com.jredfox.skincaps;
 
 import com.evilnotch.lib.main.skin.SkinCache;
 import com.evilnotch.lib.util.JavaUtil;
