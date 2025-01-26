@@ -3,10 +3,10 @@ package com.jredfox.skincaps;
 import java.io.File;
 
 import com.evilnotch.lib.main.skin.SkinCache;
+import com.evilnotch.lib.main.skin.SkinEntry;
 import com.evilnotch.lib.main.skin.SkinEvent;
 import com.evilnotch.lib.minecraft.registry.GeneralRegistry;
 import com.evilnotch.lib.util.JavaUtil;
-import com.evilnotch.lib.util.simple.PairObj;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
@@ -21,7 +21,7 @@ public class SkinCaps
 {
     public static final String MODID = "skincapabilities";
     public static final String NAME = "Skin Capabilities";
-    public static final String VERSION = "0.8.0";
+    public static final String VERSION = "0.8.1";
     
     public static String userSession;
     public static Configuration cfg;
@@ -61,9 +61,7 @@ public class SkinCaps
     public void skinUser(SkinEvent.User event)
     {
     	if(!skin.isEmpty() && !JavaUtil.isURL(skin))
-    	{
-    		event.username = skin.toLowerCase();
-    	}
+    		event.username = skin;
     }
     
     @SubscribeEvent
@@ -92,22 +90,21 @@ public class SkinCaps
     		}
     		else if(!JavaUtil.isURL(cape))
     		{
-    			String url = SkinCache.INSTANCE.getOrDownload(event.skin, cape.toLowerCase()).cape;
-    			if(!JavaUtil.isURL(url) && !SkinCache.INSTANCE.isMojangOnline())
-    				return;//if the cape url fetch failed do not continue
-    			cape = url;
+    			SkinEntry capeSkin = SkinCache.INSTANCE.getOrDownload(event.skin, cape.toLowerCase());
+    			//if there is no cape don't make yourself loose your current cape this is what "$clear" or "$nocape" is for
+    			if(capeSkin.isEmpty || !JavaUtil.isURL(capeSkin.cape))
+    				return;
+    			event.skin.cape = capeSkin.cape;
+    			cape = capeSkin.cape;
     			saveConfig();//save cape conversion to URL
     		}
-			event.skin.cape = cape;
+    		else
+    			event.skin.cape = cape;
     		dirty = true;
     	}
     	
     	if(dirty)
-    	{
-    		if(event.skin.isEmpty)
-    			event.skin.skin = "http://textures.minecraft.net/texture/$null"; //gets redirected to either http://textures.minecraft.net/texture/$steve or http://textures.minecraft.net/texture/$alex which gets patched on client side to be steve or alex
     		event.skin.isEmpty = false;
-    	}
     }
    
     /**
