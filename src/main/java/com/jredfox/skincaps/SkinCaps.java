@@ -1,6 +1,8 @@
 package com.jredfox.skincaps;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.evilnotch.lib.main.skin.SkinCache;
 import com.evilnotch.lib.main.skin.SkinEntry;
@@ -25,11 +27,14 @@ public class SkinCaps
     
     public static String userSession;
     public static Configuration cfg;
-    public static Configuration capeCache;
     public static String skin = "";
     public static String model = "";
     public static String cape = "";
     public static boolean cacheCapes;
+    
+    //cape cache
+    public static File cape_cache;
+    public static Set<String> capes;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -47,12 +52,15 @@ public class SkinCaps
         skin = cfg.get("caps", "skin", "").getString().trim();
         cape = cfg.get("caps", "cape", "").getString().trim();
         model = cfg.get("caps", "model", "").getString().trim().toLowerCase();
+        cacheCapes = cfg.get("caps", "cache_capes", true).getBoolean();
         cfg.save();
         
-        capeCache = new Configuration(new File(dir, "capeCache.cfg"));
-        capeCache.load();
-        cacheCapes = capeCache.get("general", "cacheCapes", true).getBoolean();
-        capeCache.save();
+        //Load Cape Cache
+        if(cacheCapes)
+        {
+	        cape_cache = new File(dir, "cahe_capes.txt");
+	        this.capes = cape_cache.exists() ? new HashSet(JavaUtil.getFileLines(cape_cache, true)) : new HashSet();
+        }
         
         //register the command
         GeneralRegistry.registerClientCommand(new SkinCommand());
@@ -82,6 +90,8 @@ public class SkinCaps
     		dirty = true;
     	}
     	
+    	this.cacheCape(event.skin.cape);//cache initial cape if found
+    	
     	//converts the cape from username to URL
     	if(!cape.isEmpty())
     	{
@@ -105,22 +115,24 @@ public class SkinCaps
     	}
     	
     	if(dirty)
+    	{
     		event.skin.isEmpty = false;
+    		this.cacheCape(event.skin.cape);//cache cape after
+    	}
     }
-   
-    /**
-     * TODO implments whenever a player has a cape and joined the world
-     */
-    public static void cacheCapes(String... capes)
+    
+    public void cacheCape(String url)
     {
         if(!cacheCapes)
         	return;
         
-    	capeCache.load();
-    	for(String c : capes)
-    		if(!c.isEmpty() && JavaUtil.isURL(c))
-    			capeCache.get("capes", c, true);
-    	capeCache.save();
+    	if(JavaUtil.isURL(url))
+    	{
+    		if(this.capes.add(url))
+    		{
+    			JavaUtil.saveFileLines(this.capes, this.cape_cache, true);
+    		}
+    	}
     }
 
 	public static void saveConfig()
@@ -128,7 +140,7 @@ public class SkinCaps
         cfg.get("caps", "skin", "").set(skin);
         cfg.get("caps", "cape", "").set(cape);
         cfg.get("caps", "model", "").set(model);
-        cfg.get("caps", "cached_capes", true);
+        cfg.get("caps", "cache_capes", true);
         cfg.save();
 	}
 }
