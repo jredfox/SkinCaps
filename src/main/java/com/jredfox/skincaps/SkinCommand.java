@@ -21,7 +21,7 @@ public class SkinCommand extends CommandBase {
     }
 
 	@Override
-	public String getName(){
+	public String getName() {
 		return "skin";
 	}
 

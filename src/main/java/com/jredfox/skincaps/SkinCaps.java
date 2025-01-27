@@ -35,6 +35,7 @@ public class SkinCaps
     public void preInit(FMLPreInitializationEvent event)
     {
         MinecraftForge.EVENT_BUS.register(this);
+        
         //load the config
         File dir = new File(event.getSuggestedConfigurationFile().getParentFile(), "SkinCapabilities");
         if(!dir.exists())
