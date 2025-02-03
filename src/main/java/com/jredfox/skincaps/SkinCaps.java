@@ -140,7 +140,7 @@ public class SkinCaps
     		}
     		else if(!JavaUtil.isURL(cape))
     		{
-    			SkinEntry capeSkin = SkinCache.INSTANCE.getOrDownload(event.skin, cape.toLowerCase());
+    			SkinEntry capeSkin = SkinCache.INSTANCE.getOrDownload(cape.toLowerCase());
     			//if there is no cape don't make yourself loose your current cape this is what "$clear" or "$nocape" is for
     			if(capeSkin.isEmpty || !JavaUtil.isURL(capeSkin.cape))
     				return;
@@ -161,7 +161,7 @@ public class SkinCaps
     		}
     		if(!JavaUtil.isURL(elytra))
     		{
-    			SkinEntry skin = SkinCache.INSTANCE.getOrDownload(event.skin, elytra.toLowerCase());
+    			SkinEntry skin = SkinCache.INSTANCE.getOrDownload(elytra.toLowerCase());
     			//use $clear or $noElytra to clear the elytra otherwise don't loose your current settings
     			if(skin.isEmpty || !JavaUtil.isURL(skin.elytra) && !JavaUtil.isURL(skin.cape))
     				return;
