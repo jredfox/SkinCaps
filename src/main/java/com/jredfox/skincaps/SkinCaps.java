@@ -134,7 +134,7 @@ public class SkinCaps
     	//converts the cape from username to URL
     	if(!cape.isEmpty())
     	{
-    		if(cape.equalsIgnoreCase("$clear") || cape.equalsIgnoreCase("$nocape"))
+    		if(cape.equalsIgnoreCase("$clear") || cape.equalsIgnoreCase("$noCape"))
     		{
     			event.skin.cape = "";//clears the cape
     		}
