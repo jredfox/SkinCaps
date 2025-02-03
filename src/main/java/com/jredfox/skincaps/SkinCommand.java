@@ -28,7 +28,7 @@ public class SkinCommand extends CommandBase {
 	@Override
 	public String getUsage(ICommandSender sender)
 	{
-		return "/skin set [skin, cape, model] [username or URL unless model which is empty, default or slim]";
+		return "/skin set [skin, cape, model, elytra] [username or URL unless model which is empty, default or slim]";
 	}
 
 	@Override
@@ -39,6 +39,7 @@ public class SkinCommand extends CommandBase {
 			throw new WrongUsageException(this.getUsage(null), new Object[0]);
 		}
 		
+		args[1] = args[1].toLowerCase();
 		String arg = args[2].replace("\"", "").trim();
 		arg = JavaUtil.isURL(arg) ? arg : arg.toLowerCase();//lowercase usernames
 		if(arg.equals("empty"))
@@ -57,6 +58,22 @@ public class SkinCommand extends CommandBase {
 			if(!arg.isEmpty() && !arg.equals("slim") && !arg.equals("default"))
 				throw new WrongUsageException(this.getUsage(null), new Object[0]);
 			SkinCaps.model = arg;
+		}
+		else if(args[1].equals("elytra"))
+		{
+			SkinCaps.elytra = arg;
+		}
+		else if(args[1].equals("mouseears") || args[1].equals("ears"))
+		{
+			SkinCaps.ears = arg.equals("true");
+			SkinCaps.syncCaps();
+			return;
+		}
+		else if(args[1].equals("dinnerbone"))
+		{
+			SkinCaps.dinnerbone = arg.equals("true");
+			SkinCaps.syncCaps();
+			return;
 		}
 		SkinCaps.saveConfig();
 		SkinCache.INSTANCE.refreshClientSkin();
