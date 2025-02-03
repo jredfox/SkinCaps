@@ -8,6 +8,7 @@ import com.evilnotch.lib.main.capability.CapRegDefaultHandler;
 import com.evilnotch.lib.main.skin.SkinCache;
 import com.evilnotch.lib.main.skin.SkinEntry;
 import com.evilnotch.lib.main.skin.SkinEvent;
+import com.evilnotch.lib.minecraft.capability.client.ClientCap;
 import com.evilnotch.lib.minecraft.capability.client.ClientCapHooks;
 import com.evilnotch.lib.minecraft.capability.primitive.CapBoolean;
 import com.evilnotch.lib.minecraft.capability.registry.CapabilityRegistry;
@@ -33,7 +34,7 @@ public class SkinCaps
 {
     public static final String MODID = "skincapabilities";
     public static final String NAME = "Skin Capabilities";
-    public static final String VERSION = "0.8.1";
+    public static final String VERSION = "0.8.2";
     
     public static String userSession;
     public static Configuration cfg;
@@ -41,13 +42,13 @@ public class SkinCaps
     public static String model = "";
     public static String cape = "";
 	public static String elytra = "";
+	public static boolean ears = true;
+	public static boolean dinnerbone = false;
     public static boolean cacheCapes;
     
     //cape cache
     public static File cape_cache;
     public static Set<String> capes;
-	public static boolean ears = true;
-	public static boolean dinnerbone = false;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -78,8 +79,12 @@ public class SkinCaps
 	        this.capes = cape_cache.exists() ? new HashSet(JavaUtil.getFileLines(cape_cache, true)) : new HashSet();
         }
         
-        //register the command
+        //register the command client-side only
         GeneralRegistry.registerClientCommand(new SkinCommand());
+        
+        //register mouse ears and dinner bone IClientCaps
+		ClientCapHooks.register(new ClientCap(ClientCapHooks.ID_EARS, true));
+		ClientCapHooks.register(new ClientCap(ClientCapHooks.ID_DINNERBONE, false));
     }
     
     public static void syncCaps()
