@@ -31,7 +31,7 @@ public class SkinCaps
 {
     public static final String MODID = "skincapabilities";
     public static final String NAME = "Skin Capabilities";
-    public static final String VERSION = "0.8.2";
+    public static final String VERSION = "0.8.3";
     
     public static String userSession;
     public static Configuration cfg;
