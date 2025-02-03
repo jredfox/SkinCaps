@@ -28,7 +28,7 @@ public class SkinCommand extends CommandBase {
 	@Override
 	public String getUsage(ICommandSender sender)
 	{
-		return "/skin set [skin, cape, model, elytra] [username or URL unless model which is empty, default or slim]";
+		return "/skin set [skin, cape, model, elytra] [username or URL unless model which is empty, default or slim]\n\n/skin set [mouse_ears, dinnerbone] [true/false]";
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class SkinCommand extends CommandBase {
 			SkinCaps.syncCaps();
 			isSkin = false;
 		}
-		else if(args[1].equals("dinnerbone"))
+		else if(args[1].equals("dinnerbone") || args[1].equals("grumm"))
 		{
 			SkinCaps.dinnerbone = arg.equals("true");
 			SkinCaps.syncCaps();
