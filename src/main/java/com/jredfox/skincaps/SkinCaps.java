@@ -23,10 +23,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-//TODO:
 /**
- * MOUSE EVENT
- * DINNERBONE EVENT
  * @author jredfox
  */
 @Mod(modid = SkinCaps.MODID, name = SkinCaps.NAME, version = SkinCaps.VERSION , clientSideOnly = true, dependencies = "required-before:evilnotchlib@[1.2.3.09,)")
@@ -42,7 +39,7 @@ public class SkinCaps
     public static String model = "";
     public static String cape = "";
 	public static String elytra = "";
-	public static boolean ears = true;
+	public static boolean ears = false;
 	public static boolean dinnerbone = false;
     public static boolean cacheCapes;
     
@@ -83,8 +80,20 @@ public class SkinCaps
         GeneralRegistry.registerClientCommand(new SkinCommand());
         
         //register mouse ears and dinner bone IClientCaps
-		ClientCapHooks.register(new ClientCap(ClientCapHooks.ID_EARS, true));
-		ClientCapHooks.register(new ClientCap(ClientCapHooks.ID_DINNERBONE, false));
+		ClientCapHooks.register(new ClientCap(ClientCapHooks.ID_EARS, ears));
+		ClientCapHooks.register(new ClientCap(ClientCapHooks.ID_DINNERBONE, dinnerbone));
+    }
+    
+    @SubscribeEvent
+    public void render(SkinEvent.Mouse event)
+    {
+    	event.ears = ClientCapHooks.getBoolean(event.player, ClientCapHooks.ID_EARS);
+    }
+    
+    @SubscribeEvent
+    public void render(SkinEvent.Dinnerbone event)
+    {
+    	event.dinnerbone = ClientCapHooks.getBoolean(event.player, ClientCapHooks.ID_DINNERBONE);
     }
     
     public static void syncCaps()
@@ -193,6 +202,8 @@ public class SkinCaps
         cfg.get("caps", "cape", "").set(cape);
         cfg.get("caps", "model", "").set(model);
         cfg.get("caps", "elytra", "").set(elytra);
+        cfg.get("caps", "mouse_ears", "").set(ears);
+        cfg.get("caps", "dinnerbone", "").set(dinnerbone);
         cfg.get("caps", "cache_capes", true);
         cfg.save();
 	}

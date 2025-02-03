@@ -39,6 +39,7 @@ public class SkinCommand extends CommandBase {
 			throw new WrongUsageException(this.getUsage(null), new Object[0]);
 		}
 		
+		boolean isSkin = true;
 		args[1] = args[1].toLowerCase();
 		String arg = args[2].replace("\"", "").trim();
 		arg = JavaUtil.isURL(arg) ? arg : arg.toLowerCase();//lowercase usernames
@@ -63,20 +64,21 @@ public class SkinCommand extends CommandBase {
 		{
 			SkinCaps.elytra = arg;
 		}
-		else if(args[1].equals("mouseears") || args[1].equals("ears"))
+		else if(args[1].equals("mouse_ears") || args[1].equals("ears"))
 		{
 			SkinCaps.ears = arg.equals("true");
 			SkinCaps.syncCaps();
-			return;
+			isSkin = false;
 		}
 		else if(args[1].equals("dinnerbone"))
 		{
 			SkinCaps.dinnerbone = arg.equals("true");
 			SkinCaps.syncCaps();
-			return;
+			isSkin = false;
 		}
 		SkinCaps.saveConfig();
-		SkinCache.INSTANCE.refreshClientSkin();
+		if(isSkin)
+			SkinCache.INSTANCE.refreshClientSkin();
 	}
 
 }
