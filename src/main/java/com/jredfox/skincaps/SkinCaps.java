@@ -16,6 +16,7 @@ import com.evilnotch.lib.minecraft.registry.GeneralRegistry;
 import com.evilnotch.lib.util.JavaUtil;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
@@ -32,6 +33,8 @@ public class SkinCaps
     public static final String MODID = "skincapabilities";
     public static final String NAME = "Skin Capabilities";
     public static final String VERSION = "0.8.3";
+	public static final ResourceLocation ID_EARS = new ResourceLocation("skincaps", "ears");
+	public static final ResourceLocation ID_DINNERBONE = new ResourceLocation("skincaps", "dinnerbone");
     
     public static String userSession;
     public static Configuration cfg;
@@ -80,29 +83,29 @@ public class SkinCaps
         GeneralRegistry.registerClientCommand(new SkinCommand());
         
         //register mouse ears and dinner bone IClientCaps
-		ClientCapHooks.register(new ClientCap(ClientCapHooks.ID_EARS, ears));
-		ClientCapHooks.register(new ClientCap(ClientCapHooks.ID_DINNERBONE, dinnerbone));
+		ClientCapHooks.register(new ClientCap(ID_EARS, ears));
+		ClientCapHooks.register(new ClientCap(ID_DINNERBONE, dinnerbone));
     }
     
     @SubscribeEvent
     public void render(SkinEvent.Mouse event)
     {
-    	event.ears = ClientCapHooks.getBoolean(event.player, ClientCapHooks.ID_EARS);
+    	event.ears = ClientCapHooks.getBoolean(event.player, ID_EARS);
     }
     
     @SubscribeEvent
     public void render(SkinEvent.Dinnerbone event)
     {
-    	event.dinnerbone = ClientCapHooks.getBoolean(event.player, ClientCapHooks.ID_DINNERBONE);
+    	event.dinnerbone = ClientCapHooks.getBoolean(event.player, ID_DINNERBONE);
     }
     
     public static void syncCaps()
     {
-    	ClientCapHooks.set(ClientCapHooks.ID_EARS, ears);
-    	ClientCapHooks.set(ClientCapHooks.ID_DINNERBONE, dinnerbone);
+    	ClientCapHooks.set(ID_EARS, ears);
+    	ClientCapHooks.set(ID_DINNERBONE, dinnerbone);
     	Minecraft mc = Minecraft.getMinecraft();
     	if(mc.player != null && mc.player.connection != null && ((CapBoolean) CapabilityRegistry.getCapability(mc.player, CapRegDefaultHandler.addedToWorld)).value)
-    		ClientCapHooks.uploadUpdate(ClientCapHooks.ID_EARS, ClientCapHooks.ID_DINNERBONE);
+    		ClientCapHooks.uploadUpdate(ID_EARS, ID_DINNERBONE);
     }
     
     @SubscribeEvent
