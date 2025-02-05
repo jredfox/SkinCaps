@@ -32,7 +32,7 @@ public class SkinCaps
 {
     public static final String MODID = "skincapabilities";
     public static final String NAME = "Skin Capabilities";
-    public static final String VERSION = "0.8.3";
+    public static final String VERSION = "0.8.4";
 	public static final ResourceLocation ID_EARS = new ResourceLocation("skincaps", "ears");
 	public static final ResourceLocation ID_DINNERBONE = new ResourceLocation("skincaps", "dinnerbone");
     
@@ -42,8 +42,8 @@ public class SkinCaps
     public static String model = "";
     public static String cape = "";
 	public static String elytra = "";
-	public static boolean ears = false;
-	public static boolean dinnerbone = false;
+	public static boolean ears;
+	public static boolean dinnerbone;
     public static boolean cacheCapes;
     
     //cape cache
@@ -67,8 +67,8 @@ public class SkinCaps
         cape = cfg.get("caps", "cape", "").getString().trim();
         model = cfg.get("caps", "model", "").getString().trim().toLowerCase();
         elytra = cfg.get("caps", "elytra", "").getString().trim();
-        ears = cfg.get("caps", "mouse_ears", ears).getBoolean();
-        dinnerbone = cfg.get("caps", "dinnerbone", dinnerbone).getBoolean();
+        ears = cfg.get("caps", "mouse_ears", false).getBoolean();
+        dinnerbone = cfg.get("caps", "dinnerbone", false).getBoolean();
         cacheCapes = cfg.get("caps", "cache_capes", true).getBoolean();
         cfg.save();
         
@@ -145,11 +145,12 @@ public class SkinCaps
     		{
     			SkinEntry capeSkin = SkinCache.INSTANCE.getOrDownload(cape.toLowerCase());
     			//if there is no cape don't make yourself loose your current cape this is what "$clear" or "$nocape" is for
-    			if(capeSkin.isEmpty || !JavaUtil.isURL(capeSkin.cape))
-    				return;
-    			event.skin.cape = capeSkin.cape;
-    			cape = capeSkin.cape;
-    			saveConfig();//save cape conversion to URL
+    			if(!capeSkin.isEmpty && JavaUtil.isURL(capeSkin.cape))
+    			{
+	    			event.skin.cape = capeSkin.cape;
+	    			cape = capeSkin.cape;
+	    			saveConfig();//save cape conversion to URL
+    			}
     		}
     		else
     			event.skin.cape = cape;
@@ -166,11 +167,12 @@ public class SkinCaps
     		{
     			SkinEntry skin = SkinCache.INSTANCE.getOrDownload(elytra.toLowerCase());
     			//use $clear or $noElytra to clear the elytra otherwise don't loose your current settings
-    			if(skin.isEmpty || !JavaUtil.isURL(skin.elytra) && !JavaUtil.isURL(skin.cape))
-    				return;
-    			event.skin.elytra = skin.elytra.isEmpty() ? skin.cape : skin.elytra;//if the user doesn't have a specific elytra skin use the cape texture as the eyltra skin
-    			elytra = event.skin.elytra;
-    			saveConfig();//save the conversion to URL
+    			if(!skin.isEmpty && (JavaUtil.isURL(skin.elytra) || JavaUtil.isURL(skin.cape)) )
+    			{
+	    			event.skin.elytra = skin.elytra.isEmpty() ? skin.cape : skin.elytra;//if the user doesn't have a specific elytra skin use the cape texture as the eyltra skin
+	    			elytra = event.skin.elytra;
+	    			saveConfig();//save the conversion to URL
+    			}
     		}
     		else
     			event.skin.elytra = elytra;
@@ -205,8 +207,8 @@ public class SkinCaps
         cfg.get("caps", "cape", "").set(cape);
         cfg.get("caps", "model", "").set(model);
         cfg.get("caps", "elytra", "").set(elytra);
-        cfg.get("caps", "mouse_ears", "").set(ears);
-        cfg.get("caps", "dinnerbone", "").set(dinnerbone);
+        cfg.get("caps", "mouse_ears", false).set(ears);
+        cfg.get("caps", "dinnerbone", false).set(dinnerbone);
         cfg.get("caps", "cache_capes", true);
         cfg.save();
 	}
