@@ -46,6 +46,8 @@ public class SkinCaps
 	public static boolean ears;
 	public static boolean dinnerbone;
 	public static boolean trans;
+	public static String lastCape = "";
+	public static String lastElytra = "";
     
     //cape cache
     public static boolean cacheCapes;
@@ -158,7 +160,11 @@ public class SkinCaps
     			{
 	    			event.skin.cape = capeSkin.cape;
 	    			cape = capeSkin.cape;
-	    			saveConfig();//save cape conversion to URL
+    			}
+    			//on failure preserve cape
+    			else if(JavaUtil.isURL(lastCape)) {
+    				event.skin.cape = lastCape;
+    				cape = lastCape;
     			}
     		}
     		else
@@ -180,7 +186,11 @@ public class SkinCaps
     			{
 	    			event.skin.elytra = skin.elytra.isEmpty() ? skin.cape : skin.elytra;//if the user doesn't have a specific elytra skin use the cape texture as the eyltra skin
 	    			elytra = event.skin.elytra;
-	    			saveConfig();//save the conversion to URL
+    			}
+    			//on failure preserve elytra
+    			else if(JavaUtil.isURL(lastElytra)) {
+    				event.skin.elytra = lastElytra;
+    				elytra = lastElytra;
     			}
     		}
     		else
@@ -188,12 +198,16 @@ public class SkinCaps
     		dirty = true;
     	}
     	
+    	lastCape = cape;
+    	lastElytra = elytra;
+    	
     	if(dirty)
     	{
     		event.skin.isEmpty = false;
     		this.cacheCape(event.skin.cape);//cache cape after
     		this.cacheCape(event.skin.elytra);//cache cape or elytra produced by elytra call
     	}
+    	saveConfig();
     }
     
     public void cacheCape(String url)

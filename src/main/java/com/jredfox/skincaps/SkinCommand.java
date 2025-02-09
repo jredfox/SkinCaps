@@ -76,9 +76,10 @@ public class SkinCommand extends CommandBase {
 			SkinCaps.syncCaps();
 			isSkin = false;
 		}
-		SkinCaps.saveConfig();
 		if(isSkin)
 			SkinCache.INSTANCE.refreshClientSkin();
+		else
+			SkinCaps.saveConfig();
 	}
 
 }
