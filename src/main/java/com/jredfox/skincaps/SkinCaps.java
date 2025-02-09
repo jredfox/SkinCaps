@@ -12,6 +12,7 @@ import com.evilnotch.lib.minecraft.capability.client.ClientCap;
 import com.evilnotch.lib.minecraft.capability.client.ClientCapHooks;
 import com.evilnotch.lib.minecraft.capability.primitive.CapBoolean;
 import com.evilnotch.lib.minecraft.capability.registry.CapabilityRegistry;
+import com.evilnotch.lib.minecraft.event.client.SkinTransparencyEvent;
 import com.evilnotch.lib.minecraft.registry.GeneralRegistry;
 import com.evilnotch.lib.util.JavaUtil;
 
@@ -32,7 +33,7 @@ public class SkinCaps
 {
     public static final String MODID = "skincapabilities";
     public static final String NAME = "Skin Capabilities";
-    public static final String VERSION = "0.8.4";
+    public static final String VERSION = "0.9.0";
 	public static final ResourceLocation ID_EARS = new ResourceLocation("skincaps", "ears");
 	public static final ResourceLocation ID_DINNERBONE = new ResourceLocation("skincaps", "dinnerbone");
     
@@ -44,9 +45,10 @@ public class SkinCaps
 	public static String elytra = "";
 	public static boolean ears;
 	public static boolean dinnerbone;
-    public static boolean cacheCapes;
+	public static boolean trans;
     
     //cape cache
+    public static boolean cacheCapes;
     public static File cape_cache;
     public static Set<String> capes;
 
@@ -69,6 +71,7 @@ public class SkinCaps
         elytra = cfg.get("caps", "elytra", "").getString().trim();
         ears = cfg.get("caps", "mouse_ears", false).getBoolean();
         dinnerbone = cfg.get("caps", "dinnerbone", false).getBoolean();
+        trans = cfg.get("caps", "transparency", false).getBoolean();
         cacheCapes = cfg.get("caps", "cache_capes", true).getBoolean();
         cfg.save();
         
@@ -76,7 +79,7 @@ public class SkinCaps
         if(cacheCapes)
         {
 	        cape_cache = new File(dir, "cahe_capes.txt");
-	        this.capes = cape_cache.exists() ? new HashSet(JavaUtil.getFileLines(cape_cache, true)) : new HashSet();
+	        SkinCaps.capes = cape_cache.exists() ? new HashSet(JavaUtil.getFileLines(cape_cache, true)) : new HashSet();
         }
         
         //register the command client-side only
@@ -85,6 +88,12 @@ public class SkinCaps
         //register mouse ears and dinner bone IClientCaps
 		ClientCapHooks.register(new ClientCap(ID_EARS, ears));
 		ClientCapHooks.register(new ClientCap(ID_DINNERBONE, dinnerbone));
+    }
+    
+    @SubscribeEvent
+    public void coolSkin(SkinTransparencyEvent event)
+    {
+    	//TODO: EvilNotchLib 1.2.3.10's Event which will contain more information needed to determine if a skin can be transparent
     }
     
     @SubscribeEvent
@@ -194,9 +203,9 @@ public class SkinCaps
         
     	if(JavaUtil.isURL(url))
     	{
-    		if(this.capes.add(url))
+    		if(SkinCaps.capes.add(url))
     		{
-    			JavaUtil.saveFileLines(this.capes, this.cape_cache, true);
+    			JavaUtil.saveFileLines(SkinCaps.capes, SkinCaps.cape_cache, true);
     		}
     	}
     }
