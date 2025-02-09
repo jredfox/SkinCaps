@@ -92,11 +92,11 @@ public class SkinCaps
 		ClientCapHooks.register(new ClientCap(ID_DINNERBONE, dinnerbone));
     }
     
-    @SubscribeEvent
-    public void coolSkin(SkinTransparencyEvent event)
-    {
+//    @SubscribeEvent
+//    public void coolSkin(SkinTransparencyEvent event)
+//    {
     	//TODO: EvilNotchLib 1.2.3.10's Event which will contain more information needed to determine if a skin can be transparent
-    }
+//    }
     
     @SubscribeEvent
     public void render(SkinEvent.Mouse event)
@@ -154,17 +154,25 @@ public class SkinCaps
     		}
     		else if(!JavaUtil.isURL(cape))
     		{
-    			SkinEntry capeSkin = SkinCache.INSTANCE.getOrDownload(cape.toLowerCase());
-    			//if there is no cape don't make yourself loose your current cape this is what "$clear" or "$nocape" is for
-    			if(!capeSkin.isEmpty && JavaUtil.isURL(capeSkin.cape))
+    			if(cape.startsWith("@"))
     			{
-	    			event.skin.cape = capeSkin.cape;
-	    			cape = capeSkin.cape;
+    				SkinEntry dl = SkinCache.INSTANCE.getOrDownload(cape.substring(1).toLowerCase());
+    				event.skin.cape = dl.cape;
     			}
-    			//on failure preserve cape
-    			else if(JavaUtil.isURL(lastCape)) {
-    				event.skin.cape = lastCape;
-    				cape = lastCape;
+    			else
+    			{
+	    			SkinEntry capeSkin = SkinCache.INSTANCE.getOrDownload(cape.toLowerCase());
+	    			//if there is no cape don't make yourself loose your current cape this is what "$clear" or "$nocape" is for
+	    			if(!capeSkin.isEmpty && JavaUtil.isURL(capeSkin.cape))
+	    			{
+		    			event.skin.cape = capeSkin.cape;
+		    			cape = capeSkin.cape;
+	    			}
+	    			//on failure preserve cape
+	    			else if(JavaUtil.isURL(lastCape)) {
+	    				event.skin.cape = lastCape;
+	    				cape = lastCape;
+	    			}
     			}
     		}
     		else
@@ -180,17 +188,25 @@ public class SkinCaps
     		}
     		if(!JavaUtil.isURL(elytra))
     		{
-    			SkinEntry skin = SkinCache.INSTANCE.getOrDownload(elytra.toLowerCase());
-    			//use $clear or $noElytra to clear the elytra otherwise don't loose your current settings
-    			if(!skin.isEmpty && (JavaUtil.isURL(skin.elytra) || JavaUtil.isURL(skin.cape)) )
+    			if(elytra.startsWith("@"))
     			{
-	    			event.skin.elytra = skin.elytra.isEmpty() ? skin.cape : skin.elytra;//if the user doesn't have a specific elytra skin use the cape texture as the eyltra skin
-	    			elytra = event.skin.elytra;
+    				SkinEntry dl = SkinCache.INSTANCE.getOrDownload(elytra.substring(1).toLowerCase());
+    				event.skin.elytra = dl.elytra.isEmpty() ? dl.cape : dl.elytra;
     			}
-    			//on failure preserve elytra
-    			else if(JavaUtil.isURL(lastElytra)) {
-    				event.skin.elytra = lastElytra;
-    				elytra = lastElytra;
+    			else
+    			{
+	    			SkinEntry skin = SkinCache.INSTANCE.getOrDownload(elytra.toLowerCase());
+	    			//use $clear or $noElytra to clear the elytra otherwise don't loose your current settings
+	    			if(!skin.isEmpty && (JavaUtil.isURL(skin.elytra) || JavaUtil.isURL(skin.cape)) )
+	    			{
+		    			event.skin.elytra = skin.elytra.isEmpty() ? skin.cape : skin.elytra;//if the user doesn't have a specific elytra skin use the cape texture as the eyltra skin
+		    			elytra = event.skin.elytra;
+	    			}
+	    			//on failure preserve elytra
+	    			else if(JavaUtil.isURL(lastElytra)) {
+	    				event.skin.elytra = lastElytra;
+	    				elytra = lastElytra;
+	    			}
     			}
     		}
     		else
