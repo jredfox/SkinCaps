@@ -10,13 +10,13 @@ public class ElytraCommand extends SkinCommand {
 	@Override
 	public String getName() 
 	{
-		return "elytra";
+		return SkinCaps.simpleNames ? "elytra" : "elytra_cap";
 	}
 	
 	@Override
 	public String getUsage(ICommandSender sender)
 	{
-		return "/elytra [username, url]";
+		return "/" + this.getName() + " [username, url]";
 	}
 	
 	@Override

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.evilnotch.lib.main.MainJava;
 import com.evilnotch.lib.main.capability.CapRegDefaultHandler;
 import com.evilnotch.lib.main.skin.SkinCache;
 import com.evilnotch.lib.main.skin.SkinEntry;
@@ -32,12 +33,12 @@ public class SkinCaps
 {
     public static final String MODID = "skincapabilities";
     public static final String NAME = "Skin Capabilities";
-    public static final String VERSION = "0.9.1";
+    public static final String VERSION = "0.10.0";
 	public static final ResourceLocation ID_EARS = new ResourceLocation("skincaps", "ears");
 	public static final ResourceLocation ID_DINNERBONE = new ResourceLocation("skincaps", "dinnerbone");
     
-    public static String userSession;
     public static Configuration cfg;
+    public static boolean simpleNames;
     public static String skin = "";
     public static String model = "";
     public static String cape = "";
@@ -63,8 +64,7 @@ public class SkinCaps
         if(!dir.exists())
         	dir.mkdir();
         
-        userSession = Minecraft.getMinecraft().getSession().getUsername().toLowerCase();
-        cfg = new Configuration(new File(dir, userSession + ".cfg"));
+        cfg = new Configuration(new File(dir, MainJava.proxy.getUsername().toLowerCase() + ".cfg"));
         cfg.load();
         skin = cfg.get("caps", "skin", "").getString().trim();
         cape = cfg.get("caps", "cape", "").getString().trim();
@@ -75,6 +75,12 @@ public class SkinCaps
         trans = cfg.get("caps", "transparency", true).getBoolean();
         cacheCapes = cfg.get("caps", "cache_capes", true).getBoolean();
         cfg.save();
+        
+        Configuration mastercfg = new Configuration(new File(dir, "SkinCapabilities.cfg"));
+        mastercfg.load();
+        simpleNames = mastercfg.get("general", "SimpleCommandNames", true).getBoolean();
+        cacheCapes =  mastercfg.get("general", "AllowCapeCache", true).getBoolean() && cacheCapes;
+        mastercfg.save();
         
         //Load Cape Cache
         if(cacheCapes)

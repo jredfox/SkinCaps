@@ -10,13 +10,13 @@ public class CapeCommand extends SkinCommand {
 	@Override
 	public String getName() 
 	{
-		return "cape";
+		return SkinCaps.simpleNames ? "cape" : "cape_cap";
 	}
 	
 	@Override
 	public String getUsage(ICommandSender sender)
 	{
-		return "/cape [username, url]";
+		return "/" + this.getName() + " [username, url]";
 	}
 	
 	@Override

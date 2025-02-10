@@ -35,17 +35,18 @@ public class SkinCommand extends CommandBase {
 	@Override
 	public String getName() 
 	{
-		return "skin";
+		return SkinCaps.simpleNames ? "skin" : "skincaps";
 	}
 
 	@Override
 	public String getUsage(ICommandSender sender)
 	{
-		return  "/skin [user, url]\n"
-			  + "/skin set [skin, cape, model, elytra] [user, url]\n"
-			  + "/skin get [entry, skin, cape, model, elytra] [user, url]\n"
-			  + "/skin refresh [user, url]\n"
-			  + "/skin refresh\n";
+		String name = this.getName();
+		return  "/" + name + " [user, url]\n"
+			  + "/" + name + " [skin, cape, model, elytra] [user, url]\n"
+			  + "/" + name + " [entry, skin, cape, model, elytra] [user, url]\n"
+			  + "/" + name + " refresh [user, url]\n"
+			  + "/" + name + " refresh\n";
 	}
 
 	@Override
