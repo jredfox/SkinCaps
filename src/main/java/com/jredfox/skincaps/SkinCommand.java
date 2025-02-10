@@ -43,8 +43,8 @@ public class SkinCommand extends CommandBase {
 	{
 		String name = this.getName();
 		return  "/" + name + " [user, url]\n"
-			  + "/" + name + " [skin, cape, model, elytra] [user, url]\n"
-			  + "/" + name + " [entry, skin, cape, model, elytra] [user, url]\n"
+			  + "/" + name + " set [skin, cape, model, elytra] [user, url]\n"
+			  + "/" + name + " get [entry, skin, cape, model, elytra] [user, url]\n"
 			  + "/" + name + " refresh [user, url]\n"
 			  + "/" + name + " refresh\n";
 	}
