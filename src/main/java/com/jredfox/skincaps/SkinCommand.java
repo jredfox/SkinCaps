@@ -1,14 +1,25 @@
 package com.jredfox.skincaps;
 
 import com.evilnotch.lib.main.skin.SkinCache;
+import com.evilnotch.lib.main.skin.SkinEntry;
+import com.evilnotch.lib.minecraft.util.EnumChatFormatting;
+import com.evilnotch.lib.minecraft.util.PlayerUtil;
 import com.evilnotch.lib.util.JavaUtil;
 
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.event.ClickEvent;
 
+/**
+ * Doesn't run when the world isn't remote
+ * @author jredfox
+ */
 public class SkinCommand extends CommandBase {
 	
     /**
@@ -34,7 +45,32 @@ public class SkinCommand extends CommandBase {
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException 
 	{
-		if(args.length < 3 || !args[0].equals("set"))
+		if(!(sender instanceof EntityPlayerSP))
+			return;
+		
+		EntityPlayer p = (EntityPlayer) sender;
+		
+		//Handles /skin refresh user
+		if(args[0].equals("refresh"))
+		{
+			if(args.length >= 2)
+			{
+				SkinCache.INSTANCE.refresh(args[1].toLowerCase(), false);//re-download the specified user
+				SkinCache.INSTANCE.refreshClientSkin();//re-sync the client's skin in case they wanted to use the refreshed skin
+				p.sendMessage(new TextComponentString("Skin is Refreshing: " + args[1]));
+			}
+			else
+			{
+				SkinCache.INSTANCE.refreshClientSkin();//re-sync the client's skin in case they wanted to use the refreshed skin
+				p.sendMessage(new TextComponentString("Skin is Refreshing: " + p.getName()));
+			}
+			return;
+		}
+		//Handles /skin user --> /skin set skin user
+		else if(args.length == 1)
+			args = new String[]{"set", "skin", args[0]};
+		
+		if(args.length < 3 || !args[0].equals("set") && !args[0].equals("get"))
 		{
 			throw new WrongUsageException(this.getUsage(null), new Object[0]);
 		}
@@ -46,36 +82,94 @@ public class SkinCommand extends CommandBase {
 		if(arg.equals("empty"))
 			arg = "";
 		
-		if(args[1].equals("skin"))
+		//Handles /skin get <protocal> username
+		if(args[0].equals("get")) 
 		{
-			SkinCaps.skin = arg;
+			SkinEntry entry = SkinCache.INSTANCE.getOrDownload(arg);
+			switch(args[1])
+			{
+				case "entry":
+					PlayerUtil.sendURL(p, "Skin Entry Copied to Clipboard", "", ClickEvent.Action.OPEN_URL);
+					PlayerUtil.copyClipBoard(p, JavaUtil.toPrettyFormat(entry.encodeJSON().toString()));
+				break;
+				
+				case "skin":
+					p.sendMessage(new TextComponentString("Skin Copied to Clipboard"));
+					PlayerUtil.copyClipBoard(p, entry.skin);
+				break;
+				
+				case "model":
+					p.sendMessage(new TextComponentString("Model Copied to Clipboard"));
+					PlayerUtil.copyClipBoard(p, entry.hasModel() ? entry.model : "default");
+				break;
+				
+				case "cape":
+					String cape = entry.cape;
+					if(cape.isEmpty())
+					{
+						p.sendMessage(new TextComponentString(EnumChatFormatting.RED + "Cape is Empty For: " + EnumChatFormatting.BLUE + arg));
+						break;
+					}
+					p.sendMessage(new TextComponentString("Cape Copied to Clipboard"));
+					PlayerUtil.copyClipBoard(p, cape);
+				break;
+				
+				case "elytra":
+					String elytra = entry.elytra.isEmpty() ? entry.cape : entry.elytra;
+					if(elytra.isEmpty())
+					{
+						p.sendMessage(new TextComponentString(EnumChatFormatting.RED + "Elytra is Empty For: " + EnumChatFormatting.BLUE + arg));
+						break;
+					}
+					p.sendMessage(new TextComponentString("Elytra Copied to Clipboard"));
+					PlayerUtil.copyClipBoard(p, elytra);
+				break;
+				
+				default:
+					throw new WrongUsageException(EnumChatFormatting.RED + "Unkown Skin Protocal:" + args[1], new Object[0]);
+			}
+			return;
 		}
-		else if(args[1].equals("cape"))
+		
+		//Handles /skin set <protocal> user
+		switch(args[1])
 		{
-			SkinCaps.cape = arg;
+			case "skin":
+				SkinCaps.skin = arg;
+			break;
+			
+			case "cape":
+				SkinCaps.cape = arg;
+			break;
+			
+			case "model":
+				if(!arg.isEmpty() && !arg.equals("slim") && !arg.equals("default"))
+					throw new WrongUsageException(this.getUsage(null), new Object[0]);
+				SkinCaps.model = arg;
+			break;
+			
+			case "elytra":
+				SkinCaps.elytra = arg;
+			break;
+			
+			case "mouse_ears":
+			case "ears":
+				SkinCaps.ears = arg.equals("true");
+				SkinCaps.syncCaps();
+				isSkin = false;
+			break;
+			
+			case "dinnerbone":
+			case "grumm":
+				SkinCaps.dinnerbone = arg.equals("true");
+				SkinCaps.syncCaps();
+				isSkin = false;
+			break;
+			
+			default:
+				throw new WrongUsageException(EnumChatFormatting.RED + "Unkown Skin Protocal:" + args[1], new Object[0]);
 		}
-		else if(args[1].equals("model"))
-		{
-			if(!arg.isEmpty() && !arg.equals("slim") && !arg.equals("default"))
-				throw new WrongUsageException(this.getUsage(null), new Object[0]);
-			SkinCaps.model = arg;
-		}
-		else if(args[1].equals("elytra"))
-		{
-			SkinCaps.elytra = arg;
-		}
-		else if(args[1].equals("mouse_ears") || args[1].equals("ears"))
-		{
-			SkinCaps.ears = arg.equals("true");
-			SkinCaps.syncCaps();
-			isSkin = false;
-		}
-		else if(args[1].equals("dinnerbone") || args[1].equals("grumm"))
-		{
-			SkinCaps.dinnerbone = arg.equals("true");
-			SkinCaps.syncCaps();
-			isSkin = false;
-		}
+		
 		if(isSkin)
 			SkinCache.INSTANCE.refreshClientSkin();
 		else

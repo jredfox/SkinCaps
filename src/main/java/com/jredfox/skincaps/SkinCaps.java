@@ -73,7 +73,7 @@ public class SkinCaps
         elytra = cfg.get("caps", "elytra", "").getString().trim();
         ears = cfg.get("caps", "mouse_ears", false).getBoolean();
         dinnerbone = cfg.get("caps", "dinnerbone", false).getBoolean();
-        trans = cfg.get("caps", "transparency", false).getBoolean();
+        trans = cfg.get("caps", "transparency", true).getBoolean();
         cacheCapes = cfg.get("caps", "cache_capes", true).getBoolean();
         cfg.save();
         
