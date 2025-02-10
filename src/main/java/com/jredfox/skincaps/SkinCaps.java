@@ -12,7 +12,6 @@ import com.evilnotch.lib.minecraft.capability.client.ClientCap;
 import com.evilnotch.lib.minecraft.capability.client.ClientCapHooks;
 import com.evilnotch.lib.minecraft.capability.primitive.CapBoolean;
 import com.evilnotch.lib.minecraft.capability.registry.CapabilityRegistry;
-import com.evilnotch.lib.minecraft.event.client.SkinTransparencyEvent;
 import com.evilnotch.lib.minecraft.registry.GeneralRegistry;
 import com.evilnotch.lib.util.JavaUtil;
 

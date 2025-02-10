@@ -6,6 +6,7 @@ import com.evilnotch.lib.minecraft.util.EnumChatFormatting;
 import com.evilnotch.lib.minecraft.util.PlayerUtil;
 import com.evilnotch.lib.util.JavaUtil;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -32,21 +33,26 @@ public class SkinCommand extends CommandBase {
     }
 
 	@Override
-	public String getName() {
+	public String getName() 
+	{
 		return "skin";
 	}
 
 	@Override
 	public String getUsage(ICommandSender sender)
 	{
-		return "/skin set [skin, cape, model, elytra] [username or URL unless model which is empty, default or slim]\n\n/skin set [mouse_ears, dinnerbone] [true/false]";
+		return  "/skin [user, url]\n"
+			  + "/skin set [skin, cape, model, elytra] [user, url]\n"
+			  + "/skin get [entry, skin, cape, model, elytra] [user, url]\n"
+			  + "/skin refresh [user, url]\n"
+			  + "/skin refresh\n";
 	}
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException 
 	{
-		if(!(sender instanceof EntityPlayerSP))
-			return;
+		if(!(sender instanceof EntityPlayerSP) || args.length < 1)
+			throw new WrongUsageException(this.getUsage(null), new Object[0]);
 		
 		EntityPlayer p = (EntityPlayer) sender;
 		
@@ -85,49 +91,69 @@ public class SkinCommand extends CommandBase {
 		//Handles /skin get <protocal> username
 		if(args[0].equals("get")) 
 		{
-			SkinEntry entry = SkinCache.INSTANCE.getOrDownload(arg);
-			switch(args[1])
+			final String farg = arg;
+			final String[] fargs = args;
+			Thread run = new Thread(()->
 			{
-				case "entry":
-					PlayerUtil.sendURL(p, "Skin Entry Copied to Clipboard", "", ClickEvent.Action.OPEN_URL);
-					PlayerUtil.copyClipBoard(p, JavaUtil.toPrettyFormat(entry.encodeJSON().toString()));
-				break;
-				
-				case "skin":
-					p.sendMessage(new TextComponentString("Skin Copied to Clipboard"));
-					PlayerUtil.copyClipBoard(p, entry.skin);
-				break;
-				
-				case "model":
-					p.sendMessage(new TextComponentString("Model Copied to Clipboard"));
-					PlayerUtil.copyClipBoard(p, entry.hasModel() ? entry.model : "default");
-				break;
-				
-				case "cape":
-					String cape = entry.cape;
-					if(cape.isEmpty())
-					{
-						p.sendMessage(new TextComponentString(EnumChatFormatting.RED + "Cape is Empty For: " + EnumChatFormatting.BLUE + arg));
-						break;
-					}
-					p.sendMessage(new TextComponentString("Cape Copied to Clipboard"));
-					PlayerUtil.copyClipBoard(p, cape);
-				break;
-				
-				case "elytra":
-					String elytra = entry.elytra.isEmpty() ? entry.cape : entry.elytra;
-					if(elytra.isEmpty())
-					{
-						p.sendMessage(new TextComponentString(EnumChatFormatting.RED + "Elytra is Empty For: " + EnumChatFormatting.BLUE + arg));
-						break;
-					}
-					p.sendMessage(new TextComponentString("Elytra Copied to Clipboard"));
-					PlayerUtil.copyClipBoard(p, elytra);
-				break;
-				
-				default:
-					throw new WrongUsageException(EnumChatFormatting.RED + "Unkown Skin Protocal:" + args[1], new Object[0]);
-			}
+				Minecraft mc = Minecraft.getMinecraft();
+				EntityPlayer tp = mc.player;
+				if(mc.player == null || mc.world == null)
+				{
+					System.err.println("Player or World is NULL!");
+					return;
+				}
+					
+				SkinEntry entry = SkinCache.INSTANCE.getOrDownload(farg);
+				if(entry.isEmpty) 
+				{
+					tp.sendMessage(new TextComponentString(EnumChatFormatting.RED + "Skin Failed to Download: " + farg));
+					return;
+				}
+				switch(fargs[1])
+				{
+					case "entry":
+						PlayerUtil.sendURL(tp, "Skin Entry Copied to Clipboard", "", ClickEvent.Action.OPEN_URL);
+						PlayerUtil.copyClipBoard(tp, JavaUtil.toPrettyFormat(entry.encodeJSON().toString()));
+					break;
+					
+					case "skin":
+						tp.sendMessage(new TextComponentString("Skin Copied to Clipboard"));
+						PlayerUtil.copyClipBoard(tp, entry.skin);
+					break;
+					
+					case "model":
+						tp.sendMessage(new TextComponentString("Model Copied to Clipboard"));
+						PlayerUtil.copyClipBoard(tp, entry.hasModel() ? entry.model : "default");
+					break;
+					
+					case "cape":
+						String cape = entry.cape;
+						if(cape.isEmpty())
+						{
+							tp.sendMessage(new TextComponentString(EnumChatFormatting.RED + "Cape is Empty For: " + EnumChatFormatting.BLUE + farg));
+							break;
+						}
+						tp.sendMessage(new TextComponentString("Cape Copied to Clipboard"));
+						PlayerUtil.copyClipBoard(tp, cape);
+					break;
+					
+					case "elytra":
+						String elytra = entry.elytra.isEmpty() ? entry.cape : entry.elytra;
+						if(elytra.isEmpty())
+						{
+							tp.sendMessage(new TextComponentString(EnumChatFormatting.RED + "Elytra is Empty For: " + EnumChatFormatting.BLUE + farg));
+							break;
+						}
+						tp.sendMessage(new TextComponentString("Elytra Copied to Clipboard"));
+						PlayerUtil.copyClipBoard(tp, elytra);
+					break;
+					
+					default:
+						tp.sendMessage(new TextComponentString(EnumChatFormatting.RED + "Unkown Skin Protocal:" + fargs[1]));
+				}
+			});
+			run.setDaemon(true);
+			run.start();
 			return;
 		}
 		
