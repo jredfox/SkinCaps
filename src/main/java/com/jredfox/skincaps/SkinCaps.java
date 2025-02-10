@@ -221,8 +221,8 @@ public class SkinCaps
     		dirty = true;
     	}
     	
-    	lastCape = cape;
-    	lastElytra = elytra;
+    	lastCape = event.skin.cape;
+    	lastElytra = event.skin.elytra;
     	
     	if(dirty)
     	{
