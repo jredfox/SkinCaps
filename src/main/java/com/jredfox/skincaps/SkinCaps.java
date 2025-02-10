@@ -32,7 +32,7 @@ public class SkinCaps
 {
     public static final String MODID = "skincapabilities";
     public static final String NAME = "Skin Capabilities";
-    public static final String VERSION = "0.9.0";
+    public static final String VERSION = "0.9.1";
 	public static final ResourceLocation ID_EARS = new ResourceLocation("skincaps", "ears");
 	public static final ResourceLocation ID_DINNERBONE = new ResourceLocation("skincaps", "dinnerbone");
     
@@ -85,6 +85,8 @@ public class SkinCaps
         
         //register the command client-side only
         GeneralRegistry.registerClientCommand(new SkinCommand());
+        GeneralRegistry.registerClientCommand(new CapeCommand());
+        GeneralRegistry.registerClientCommand(new ElytraCommand());
         
         //register mouse ears and dinner bone IClientCaps
 		ClientCapHooks.register(new ClientCap(ID_EARS, ears));
