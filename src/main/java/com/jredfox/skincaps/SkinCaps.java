@@ -28,12 +28,12 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 /**
  * @author jredfox
  */
-@Mod(modid = SkinCaps.MODID, name = SkinCaps.NAME, version = SkinCaps.VERSION , clientSideOnly = true, dependencies = "required-before:evilnotchlib@[1.2.3.09,)")
+@Mod(modid = SkinCaps.MODID, name = SkinCaps.NAME, version = SkinCaps.VERSION , clientSideOnly = true, dependencies = "required-before:evilnotchlib@[1.2.3.11,)")
 public class SkinCaps
 {
     public static final String MODID = "skincapabilities";
     public static final String NAME = "Skin Capabilities";
-    public static final String VERSION = "0.10.0";
+    public static final String VERSION = "0.11.0";
 	public static final ResourceLocation ID_EARS = new ResourceLocation("skincaps", "ears");
 	public static final ResourceLocation ID_DINNERBONE = new ResourceLocation("skincaps", "dinnerbone");
     
@@ -115,6 +115,12 @@ public class SkinCaps
     public void render(SkinEvent.Dinnerbone event)
     {
     	event.dinnerbone = ClientCapHooks.getBoolean(event.player, ID_DINNERBONE);
+    }
+    
+    @SubscribeEvent
+    public void render(SkinEvent.DinnerboneTab event)
+    {
+    	event.dinnerbone = ClientCapHooks.getBoolean(event.info, ID_DINNERBONE);
     }
     
     public static void syncCaps()
