@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.evilnotch.lib.api.IEvilNotchLibPreInit;
 import com.evilnotch.lib.main.MainJava;
 import com.evilnotch.lib.main.capability.CapRegDefaultHandler;
 import com.evilnotch.lib.main.skin.SkinCache;
@@ -21,19 +22,18 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
  * @author jredfox
  */
-@Mod(modid = SkinCaps.MODID, name = SkinCaps.NAME, version = SkinCaps.VERSION , clientSideOnly = true, dependencies = "required-before:evilnotchlib@[1.2.3.11,)")
-public class SkinCaps
+@Mod(modid = SkinCaps.MODID, name = SkinCaps.NAME, version = SkinCaps.VERSION , clientSideOnly = true, dependencies = "required-after:evilnotchlib@[1.2.3.11,)")
+public class SkinCaps implements IEvilNotchLibPreInit
 {
     public static final String MODID = "skincapabilities";
     public static final String NAME = "Skin Capabilities";
-    public static final String VERSION = "0.11.0";
+    public static final String VERSION = "0.12.0";
 	public static final ResourceLocation ID_EARS = new ResourceLocation("skincaps", "ears");
 	public static final ResourceLocation ID_DINNERBONE = new ResourceLocation("skincaps", "dinnerbone");
     
@@ -53,10 +53,11 @@ public class SkinCaps
     public static boolean cacheCapes;
     public static File cape_cache;
     public static Set<String> capes;
-
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
+    
+	@Override
+	public void preInitMod(FMLPreInitializationEvent event) 
+	{
+		long time = System.currentTimeMillis();
         MinecraftForge.EVENT_BUS.register(this);
         
         //load the config
@@ -97,7 +98,8 @@ public class SkinCaps
         //register mouse ears and dinner bone IClientCaps
 		ClientCapHooks.register(new ClientCap(ID_EARS, ears));
 		ClientCapHooks.register(new ClientCap(ID_DINNERBONE, dinnerbone));
-    }
+		JavaUtil.printTime(time, NAME + " Mod Loaded In:");
+	}
     
 //    @SubscribeEvent
 //    public void coolSkin(SkinTransparencyEvent event)
