@@ -28,7 +28,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 /**
  * @author jredfox
  */
-@Mod(modid = SkinCaps.MODID, name = SkinCaps.NAME, version = SkinCaps.VERSION , clientSideOnly = true, dependencies = "required-after:evilnotchlib@[1.2.3.11,)")
+@Mod(modid = SkinCaps.MODID, name = SkinCaps.NAME, version = SkinCaps.VERSION , clientSideOnly = true, dependencies = "required-after:evilnotchlib@[1.2.3.15,)")
 public class SkinCaps implements IEvilNotchLibPreInit
 {
     public static final String MODID = "skincapabilities";
