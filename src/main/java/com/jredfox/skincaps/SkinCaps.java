@@ -58,6 +58,7 @@ public class SkinCaps implements IEvilNotchLibPreInit
 	public void preInitMod(FMLPreInitializationEvent event) 
 	{
 		long time = System.currentTimeMillis();
+		
         MinecraftForge.EVENT_BUS.register(this);
         
         //load the config
@@ -98,6 +99,7 @@ public class SkinCaps implements IEvilNotchLibPreInit
         //register mouse ears and dinner bone IClientCaps
 		ClientCapHooks.register(new ClientCap(ID_EARS, ears));
 		ClientCapHooks.register(new ClientCap(ID_DINNERBONE, dinnerbone));
+		
 		JavaUtil.printTime(time, NAME + " Mod Loaded In:");
 	}
     
