@@ -33,7 +33,7 @@ public class SkinCaps implements IEvilNotchLibPreInit
 {
     public static final String MODID = "skincapabilities";
     public static final String NAME = "Skin Capabilities";
-    public static final String VERSION = "0.12.0";
+    public static final String VERSION = "0.12.1";
 	public static final ResourceLocation ID_EARS = new ResourceLocation("skincaps", "ears");
 	public static final ResourceLocation ID_DINNERBONE = new ResourceLocation("skincaps", "dinnerbone");
     

@@ -44,7 +44,7 @@ public class SkinCommand extends CommandBase {
 		String name = this.getName();
 		return  "/" + name + " [user, url]\n"
 			  + "/" + name + " set [skin, cape, model, elytra] [user, url]\n"
-			  + "/" + name + " get [entry, skin, cape, model, elytra] [user, url]\n"
+			  + "/" + name + " get [entry, encode, skin, cape, model, elytra] [user, url]\n"
 			  + "/" + name + " refresh [user, url]\n"
 			  + "/" + name + " refresh\n";
 	}
@@ -113,6 +113,11 @@ public class SkinCommand extends CommandBase {
 				switch(fargs[1])
 				{
 					case "entry":
+						PlayerUtil.sendURL(tp, "Skin Entry Copied to Clipboard", "", ClickEvent.Action.OPEN_URL);
+						PlayerUtil.copyClipBoard(tp, JavaUtil.toPrettyFormat(entry.serialize().toString()));
+					break;
+					
+					case "encode":
 						PlayerUtil.sendURL(tp, "Skin Entry Copied to Clipboard", "", ClickEvent.Action.OPEN_URL);
 						PlayerUtil.copyClipBoard(tp, JavaUtil.toPrettyFormat(entry.encodeJSON().toString()));
 					break;
