@@ -33,12 +33,13 @@ public class SkinCaps implements IEvilNotchLibPreInit
 {
     public static final String MODID = "skincapabilities";
     public static final String NAME = "Skin Capabilities";
-    public static final String VERSION = "0.12.1";
+    public static final String VERSION = "0.13.0";
 	public static final ResourceLocation ID_EARS = new ResourceLocation("skincaps", "ears");
 	public static final ResourceLocation ID_DINNERBONE = new ResourceLocation("skincaps", "dinnerbone");
     
     public static Configuration cfg;
-    public static boolean simpleNames;
+    public static String cmdprefix = "";
+    public static String cmdsuffix = "";
     public static String skin = "";
     public static String model = "";
     public static String cape = "";
@@ -58,8 +59,6 @@ public class SkinCaps implements IEvilNotchLibPreInit
 	public void preInitMod(FMLPreInitializationEvent event) 
 	{
 		long time = System.currentTimeMillis();
-		
-        MinecraftForge.EVENT_BUS.register(this);
         
         //load the config
         File dir = new File(event.getSuggestedConfigurationFile().getParentFile(), "SkinCapabilities");
@@ -80,7 +79,8 @@ public class SkinCaps implements IEvilNotchLibPreInit
         
         Configuration mastercfg = new Configuration(new File(dir, "SkinCapabilities.cfg"));
         mastercfg.load();
-        simpleNames = mastercfg.get("general", "SimpleCommandNames", true).getBoolean();
+        cmdprefix = mastercfg.get("general", "CommandNamePrefix", "").getString();
+        cmdsuffix = mastercfg.get("general", "CommandNameSuffix", "").getString();
         cacheCapes =  mastercfg.get("general", "AllowCapeCache", true).getBoolean() && cacheCapes;
         mastercfg.save();
         
@@ -91,10 +91,14 @@ public class SkinCaps implements IEvilNotchLibPreInit
 	        SkinCaps.capes = cape_cache.exists() ? new HashSet(JavaUtil.getFileLines(cape_cache, true)) : new HashSet();
         }
         
+        //register forge events
+        MinecraftForge.EVENT_BUS.register(this);
+        
         //register the command client-side only
         GeneralRegistry.registerClientCommand(new SkinCommand());
         GeneralRegistry.registerClientCommand(new CapeCommand());
         GeneralRegistry.registerClientCommand(new ElytraCommand());
+        GeneralRegistry.registerClientCommand(new ModelCommand());
         
         //register mouse ears and dinner bone IClientCaps
 		ClientCapHooks.register(new ClientCap(ID_EARS, ears));

@@ -35,7 +35,7 @@ public class SkinCommand extends CommandBase {
 	@Override
 	public String getName() 
 	{
-		return SkinCaps.simpleNames ? "skin" : "skincaps";
+		return SkinCaps.cmdprefix + "skin" + SkinCaps.cmdsuffix;
 	}
 
 	@Override

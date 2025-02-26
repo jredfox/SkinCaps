@@ -10,7 +10,7 @@ public class CapeCommand extends SkinCommand {
 	@Override
 	public String getName() 
 	{
-		return SkinCaps.simpleNames ? "cape" : "cape_cap";
+		return SkinCaps.cmdprefix + "cape" + SkinCaps.cmdsuffix;
 	}
 	
 	@Override

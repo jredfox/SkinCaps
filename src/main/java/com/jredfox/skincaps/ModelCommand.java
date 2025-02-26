@@ -5,18 +5,18 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
 
-public class ElytraCommand extends SkinCommand {
-	
+public class ModelCommand extends SkinCommand {
+
 	@Override
 	public String getName() 
 	{
-		return SkinCaps.cmdprefix + "elytra" + SkinCaps.cmdsuffix;
+		return SkinCaps.cmdprefix + "model" + SkinCaps.cmdsuffix;
 	}
 	
 	@Override
 	public String getUsage(ICommandSender sender)
 	{
-		return "/" + this.getName() + " [username, url]";
+		return "/" + this.getName() + " [slim, default, \"\"]";
 	}
 	
 	@Override
@@ -25,7 +25,6 @@ public class ElytraCommand extends SkinCommand {
 		if(args.length != 1)
 			throw new WrongUsageException(this.getUsage(null), new Object[0]);
 		
-		super.execute(server, sender, new String[]{"set", "elytra", args[0]});
+		super.execute(server, sender, new String[]{"set", "model", args[0]});
 	}
-
 }
